@@ -3,7 +3,7 @@ import { NextAuthOptions } from 'next-auth';
 import EmailProvider from 'next-auth/providers/email';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import { prisma } from '@/lib/db';
-import { sendOnboardingEmail } from '@/lib/email';
+// import { sendOnboardingEmail } from '@/lib/email';
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
@@ -33,7 +33,7 @@ export const authOptions: NextAuthOptions = {
     async session({ session, user }) {
       if (session?.user && user) {
         // Add developer info to session
-        const developer = await prisma.developer.findUnique({
+        const developer = await prisma.developer.findFirst({
           where: { user: { id: user.id } }
         });
         
@@ -42,7 +42,7 @@ export const authOptions: NextAuthOptions = {
       }
       return session;
     },
-    async signIn({ user, account, profile, email, credentials }) {
+    async signIn({ user }) {
       // Check if this is a new user
       const existingUser = await prisma.user.findUnique({
         where: { email: user.email! },

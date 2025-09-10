@@ -1,9 +1,12 @@
 'use client';
 
+// This page uses NextAuth session which requires runtime
+export const dynamic = 'force-dynamic';
+
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { CheckCircle, ArrowRight, Building, Mail, Phone, MapPin } from 'lucide-react';
+import { CheckCircle, ArrowRight, Building, Phone, MapPin } from 'lucide-react';
 import { generateClientId } from '@/lib/validation';
 
 interface DeveloperForm {
@@ -28,8 +31,10 @@ interface DeveloperForm {
 }
 
 export default function Onboarding() {
-  const { data: session, status } = useSession();
-  const router = useRouter();
+  const sessionData = useSession();
+  const session = sessionData?.data;
+  const status = sessionData?.status;
+  const _router = useRouter();
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState(1);
   const [form, setForm] = useState<DeveloperForm>({
@@ -55,16 +60,16 @@ export default function Onboarding() {
     if (status === 'loading') return;
     
     if (!session) {
-      router.push('/auth/signin');
+      _router.push('/auth/signin');
       return;
     }
 
     // Check if developer profile already exists
     if (session.user?.developer) {
-      router.push('/dashboard');
+      _router.push('/dashboard');
       return;
     }
-  }, [session, status, router]);
+  }, [session, status, _router]);
 
   const handleInputChange = (field: keyof DeveloperForm, value: string) => {
     setForm(prev => ({ ...prev, [field]: value }));
@@ -93,7 +98,7 @@ export default function Onboarding() {
       }
 
       // Success - redirect to dashboard
-      router.push('/dashboard?onboarding=success');
+      _router.push('/dashboard?onboarding=success');
 
     } catch (error) {
       alert(`Błąd: ${error instanceof Error ? error.message : 'Nieznany błąd'}`);

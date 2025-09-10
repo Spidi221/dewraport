@@ -55,7 +55,7 @@ export function extractDeveloperInfo(firstRow: ApartmentRow): DeveloperInfo {
 
 export async function triggerN8nWorkflow(csvData: ApartmentRow[]): Promise<{
   success: boolean;
-  data?: any;
+  data?: Record<string, unknown>;
   error?: string;
 }> {
   try {
@@ -95,7 +95,7 @@ export async function triggerN8nWorkflow(csvData: ApartmentRow[]): Promise<{
         })
       },
       body: JSON.stringify(payload),
-      timeout: 30000 // 30 second timeout
+      // timeout handled by Vercel (30s max for API routes)
     });
 
     if (!response.ok) {

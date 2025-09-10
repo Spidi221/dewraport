@@ -9,7 +9,7 @@ export default function SignIn() {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
-  const router = useRouter();
+  const _router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,7 +27,7 @@ export default function SignIn() {
       } else {
         setEmailSent(true);
       }
-    } catch (error) {
+    } catch {
       alert('Błąd połączenia z serwerem');
     } finally {
       setLoading(false);

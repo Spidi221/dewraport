@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import { Upload, FileText, CheckCircle, AlertTriangle, X } from 'lucide-react';
-import Papa from 'papaparse';
+import * as Papa from 'papaparse';
 import { validateCsvData, ValidationResult, ApartmentRow } from '@/lib/validation';
 import { createXmlPreview, XmlPreviewData } from '@/lib/xml';
 
@@ -40,11 +40,10 @@ export default function CsvUpload({ onUpload }: CsvUploadProps) {
       const text = await file.text();
       
       // Parse CSV with Papa Parse
-      const parsed = Papa.parse(text, {
+      const parsed = Papa.parse<Record<string, string>>(text, {
         header: true,
         skipEmptyLines: true,
-        delimiter: ';', // Polish CSV standard
-        encoding: 'UTF-8'
+        delimiter: ';' // Polish CSV standard
       });
       
       if (parsed.errors.length > 0) {

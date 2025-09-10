@@ -15,7 +15,7 @@ interface UploadData {
 }
 
 export default function UploadPage() {
-  const router = useRouter();
+  const _router = useRouter();
   const [uploadData, setUploadData] = useState<UploadData | null>(null);
   const [showXmlPreview, setShowXmlPreview] = useState(false);
   const [sending, setSending] = useState(false);
@@ -45,11 +45,11 @@ export default function UploadPage() {
       
       if (result.success) {
         alert('Dane zostały przesłane pomyślnie do dane.gov.pl!');
-        router.push('/dashboard');
+        _router.push('/dashboard');
       } else {
         alert('Błąd wysyłania: ' + result.error);
       }
-    } catch (error) {
+    } catch {
       alert('Błąd połączenia z serwerem');
     } finally {
       setSending(false);
@@ -91,7 +91,7 @@ export default function UploadPage() {
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <button
-              onClick={() => router.push('/dashboard')}
+              onClick={() => _router.push('/dashboard')}
               className="text-gray-600 hover:text-gray-900"
             >
               <ArrowLeft className="h-5 w-5" />
@@ -104,7 +104,7 @@ export default function UploadPage() {
         <div className="bg-blue-50 rounded-lg p-6">
           <h3 className="text-lg font-medium text-blue-900 mb-2">Instrukcje</h3>
           <ul className="text-sm text-blue-800 space-y-1">
-            <li>• Przygotuj plik CSV z danymi wszystkich mieszkań (format z separatorem średnik ";")</li>
+            <li>• Przygotuj plik CSV z danymi wszystkich mieszkań (format z separatorem średnik &quot;;&quot;)</li>
             <li>• Plik musi zawierać wszystkie 58 wymaganych pól zgodnie z ustawą</li>
             <li>• System automatycznie zwaliduje dane i wygeneruje XML dla dane.gov.pl</li>
             <li>• Po pozytywnej walidacji możesz od razu przesłać dane do systemu</li>

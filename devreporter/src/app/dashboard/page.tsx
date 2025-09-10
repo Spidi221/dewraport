@@ -1,5 +1,8 @@
 'use client';
 
+// This page uses API calls which require runtime
+export const dynamic = 'force-dynamic';
+
 import { useState, useEffect } from 'react';
 import { CheckCircle, AlertCircle, Upload, Calendar, RefreshCw } from 'lucide-react';
 import Layout from '@/components/Layout';
@@ -24,7 +27,7 @@ export default function Dashboard() {
       const response = await fetch('/api/status');
       const data = await response.json();
       setStatus(data);
-    } catch (error) {
+    } catch {
       // Mock data for development
       setStatus({
         isOnline: true,
@@ -56,7 +59,7 @@ export default function Dashboard() {
       } else {
         alert('Błąd synchronizacji: ' + data.error);
       }
-    } catch (error) {
+    } catch {
       alert('Błąd połączenia z serwerem');
     } finally {
       setSyncing(false);

@@ -73,7 +73,7 @@ const REQUIRED_FIELDS = [
 
 const PROPERTY_TYPES = ['Lokal mieszkalny', 'Dom jednorodzinny'];
 
-export function validateCsvData(data: any[]): ValidationResult {
+export function validateCsvData(data: Record<string, unknown>[]): ValidationResult {
   const errors: string[] = [];
   const warnings: string[] = [];
   const processedData: ApartmentRow[] = [];
@@ -96,13 +96,13 @@ export function validateCsvData(data: any[]): ValidationResult {
 
     // Validate required fields
     REQUIRED_FIELDS.forEach(field => {
-      if (!row[field] || row[field].trim() === '') {
+      if (!row[field] || String(row[field]).trim() === '') {
         rowErrors.push(`Wiersz ${rowNumber}: Brak wartości w polu "${field}"`);
       }
     });
 
     // Validate property type
-    if (row['Rodzaj'] && !PROPERTY_TYPES.includes(row['Rodzaj'])) {
+    if (row['Rodzaj'] && !PROPERTY_TYPES.includes(String(row['Rodzaj']))) {
       rowErrors.push(`Wiersz ${rowNumber}: Nieprawidłowy rodzaj "${row['Rodzaj']}". Dozwolone: ${PROPERTY_TYPES.join(', ')}`);
     }
 
@@ -110,7 +110,7 @@ export function validateCsvData(data: any[]): ValidationResult {
     const numericFields = ['Powierzchnia użytkowa', 'Cena za m²', 'Cena bazowa', 'Cena finalna'];
     numericFields.forEach(field => {
       const value = row[field];
-      if (value && isNaN(parseFloat(value.replace(',', '.')))) {
+      if (value && isNaN(parseFloat(String(value).replace(',', '.')))) {
         rowErrors.push(`Wiersz ${rowNumber}: "${field}" musi być liczbą`);
       }
     });
@@ -119,7 +119,7 @@ export function validateCsvData(data: any[]): ValidationResult {
     const dateFields = ['Data obowiązywania od', 'Data obowiązywania do'];
     dateFields.forEach(field => {
       const value = row[field];
-      if (value && isNaN(Date.parse(value))) {
+      if (value && isNaN(Date.parse(String(value)))) {
         rowErrors.push(`Wiersz ${rowNumber}: "${field}" ma nieprawidłowy format daty`);
       }
     });
@@ -127,7 +127,7 @@ export function validateCsvData(data: any[]): ValidationResult {
     // Validate email format
     if (row['Email']) {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(row['Email'])) {
+      if (!emailRegex.test(String(row['Email']))) {
         rowErrors.push(`Wiersz ${rowNumber}: Nieprawidłowy format email`);
       }
     }
@@ -135,7 +135,7 @@ export function validateCsvData(data: any[]): ValidationResult {
     // Validate NIP format (10 digits)
     if (row['NIP']) {
       const nipRegex = /^\d{10}$/;
-      const nip = row['NIP'].replace(/[-\s]/g, '');
+      const nip = String(row['NIP']).replace(/[-\s]/g, '');
       if (!nipRegex.test(nip)) {
         rowErrors.push(`Wiersz ${rowNumber}: NIP musi mieć 10 cyfr`);
       }
@@ -144,16 +144,16 @@ export function validateCsvData(data: any[]): ValidationResult {
     // Validate REGON format (9 or 14 digits)
     if (row['REGON']) {
       const regonRegex = /^\d{9}$|^\d{14}$/;
-      const regon = row['REGON'].replace(/[-\s]/g, '');
+      const regon = String(row['REGON']).replace(/[-\s]/g, '');
       if (!regonRegex.test(regon)) {
         rowErrors.push(`Wiersz ${rowNumber}: REGON musi mieć 9 lub 14 cyfr`);
       }
     }
 
     // Check price logic
-    const pricePerM2 = parseFloat(row['Cena za m²']?.replace(',', '.') || '0');
-    const usableArea = parseFloat(row['Powierzchnia użytkowa']?.replace(',', '.') || '0');
-    const basePrice = parseFloat(row['Cena bazowa']?.replace(',', '.') || '0');
+    const pricePerM2 = parseFloat(String(row['Cena za m²'] || '0').replace(',', '.'));
+    const usableArea = parseFloat(String(row['Powierzchnia użytkowa'] || '0').replace(',', '.'));
+    const basePrice = parseFloat(String(row['Cena bazowa'] || '0').replace(',', '.'));
     
     if (pricePerM2 > 0 && usableArea > 0) {
       const expectedBasePrice = pricePerM2 * usableArea;

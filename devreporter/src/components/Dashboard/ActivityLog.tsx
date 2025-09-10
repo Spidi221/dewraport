@@ -19,7 +19,7 @@ export default function ActivityLog() {
         const response = await fetch('/api/activities');
         const data = await response.json();
         setActivities(data);
-      } catch (error) {
+      } catch {
         // Mock data for development
         setActivities([
           {

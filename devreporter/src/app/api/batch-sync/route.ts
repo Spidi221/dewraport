@@ -143,7 +143,7 @@ export async function POST(request: NextRequest) {
             })
           },
           body: JSON.stringify(n8nPayload),
-          timeout: 60000 // 60 second timeout
+          // timeout handled by Vercel (60s max)
         });
 
         if (!n8nResponse.ok) {

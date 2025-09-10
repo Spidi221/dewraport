@@ -20,7 +20,7 @@ export default function StatusIndicator() {
         const response = await fetch('/api/status');
         const data = await response.json();
         setStatus(data);
-      } catch (error) {
+      } catch {
         setStatus(prev => ({ ...prev, isOnline: false }));
       }
     };
